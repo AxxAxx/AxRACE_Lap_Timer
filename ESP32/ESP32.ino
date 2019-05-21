@@ -25,6 +25,7 @@ void loop() {
     digitalWrite(ledPin, HIGH);
     SerialBT.println(1);
     delay(500);
+    
   } else {
     // turn LED off:
     digitalWrite(ledPin, LOW);
