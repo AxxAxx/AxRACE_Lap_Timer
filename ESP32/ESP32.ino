@@ -1,29 +1,81 @@
 #include "BluetoothSerial.h"
-BluetoothSerial SerialBT;
-// constants won't change. They're used here to set pin numbers:
-const int sensorPin = 13;     // the number of the pushbutton pin
-const int ledPin =  2;      // the number of the LED pin
+#include <WiFi.h>
+//BluetoothSerial SerialBT;
 
-// variables will change:
-int buttonState = 0;         // variable for reading the pushbutton status
-int sensorState = 0;         // variable for reading the pushbutton status
+// Replace with your network credentials
+const char* ssid     = "ESP32-Access-Point";
+const char* password = "5555555555";
+// Set web server port number to 80
+WiFiServer server(80);
+
+
+const int ledPin =  2;      // the number of the LED pin
+const byte interruptPin = 13;
+
+struct Button {
+  bool pressed;
+};
+
+Button button1 = {false};
 
 void IRAM_ATTR isr() {
-    // turn LED on:
-    digitalWrite(ledPin, HIGH);
-    SerialBT.println(1);
-    delay(1000);
-    digitalWrite(ledPin, LOW);
+  button1.pressed = true;
 }
 
 void setup() {
-  SerialBT.begin("ESP32");
-  // initialize the LED pin as an output:
+  Serial.begin(115200);
+  //SerialBT.begin("ESP32");
   pinMode(ledPin, OUTPUT);
-  // initialize the pushbutton pin as an input:
-  pinMode(sensorPin, INPUT_PULLUP);
-  attachInterrupt(sensorPin, isr, FALLING);
+  pinMode(interruptPin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(interruptPin), isr, FALLING);
+
+  
+  WiFi.disconnect();
+  delay(200); //this delay, if you comment out it all works, if left, softAPIP returns 0.0.0.0
+  WiFi.mode(WIFI_STA);
+  WiFi.begin("", "");
+  int connRes = WiFi.waitForConnectResult();
+  WiFi.mode(WIFI_AP);
+  //assuming connecting failed
+  WiFi.softAP(ssid, password);  
+  delay(500); 
+  server.begin();
+
+  IPAddress IP = WiFi.softAPIP();
+  Serial.print("AP IP address: ");
+  Serial.println(IP);
+  
 }
 
-void loop() { 
+void loop() {
+
+  WiFiClient client = server.available();   // Listen for incoming clients
+
+
+
+  
+
+    if (client) {                             // If a new client connects,
+    Serial.println("New Client.");          // print a message out in the serial port
+    String currentLine = "";                // make a String to hold incoming data from the client
+    while (client.connected()) {            // loop while the client's connected
+        
+          if (button1.pressed) {
+            client.println("1");
+    digitalWrite(ledPin, HIGH);
+    //SerialBT.println(1);
+    delay(1000);
+    digitalWrite(ledPin, LOW);
+    button1.pressed = false;
+
+        
+
+
+          
+    }
+            
+}
+    
+
+  }
 }
