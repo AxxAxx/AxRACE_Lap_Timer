@@ -1,6 +1,7 @@
-#include "BluetoothSerial.h"
 #include <WiFi.h>
-//BluetoothSerial SerialBT;
+
+#define WIFI
+#define DEBUG
 
 // Replace with your network credentials
 const char* ssid     = "ESP32-Access-Point";
@@ -11,6 +12,7 @@ WiFiServer server(80);
 
 const int ledPin =  2;      // the number of the LED pin
 const byte interruptPin = 13;
+static const String CONNECTED_MSG = "SOCKET_CONNECTED";
 
 struct Button {
   bool pressed;
@@ -24,9 +26,8 @@ void IRAM_ATTR isr() {
 
 void setup() {
   Serial.begin(115200);
-  //SerialBT.begin("ESP32");
   pinMode(ledPin, OUTPUT);
-  pinMode(interruptPin, INPUT_PULLUP);
+  pinMode(interruptPin,INPUT);
   attachInterrupt(digitalPinToInterrupt(interruptPin), isr, FALLING);
 
   
@@ -37,7 +38,7 @@ void setup() {
   int connRes = WiFi.waitForConnectResult();
   WiFi.mode(WIFI_AP);
   //assuming connecting failed
-  WiFi.softAP(ssid, password);  
+  WiFi.softAP(ssid, NULL);//, password);  
   delay(500); 
   server.begin();
 
@@ -48,34 +49,19 @@ void setup() {
 }
 
 void loop() {
-
   WiFiClient client = server.available();   // Listen for incoming clients
-
-
-
-  
-
-    if (client) {                             // If a new client connects,
+  if (client) {                             // If a new client connects,
+    client.println(CONNECTED_MSG);
     Serial.println("New Client.");          // print a message out in the serial port
     String currentLine = "";                // make a String to hold incoming data from the client
     while (client.connected()) {            // loop while the client's connected
-        
-          if (button1.pressed) {
-            client.println("1");
-    digitalWrite(ledPin, HIGH);
-    //SerialBT.println(1);
-    delay(1000);
-    digitalWrite(ledPin, LOW);
-    button1.pressed = false;
-
-        
-
-
-          
+      if (button1.pressed) {
+        client.println("1");
+        digitalWrite(ledPin, HIGH);
+        delay(1000);
+        digitalWrite(ledPin, LOW);
+        button1.pressed = false;    
+      }
     }
-            
-}
-    
-
   }
 }
