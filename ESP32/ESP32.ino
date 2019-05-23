@@ -6,19 +6,18 @@
 // Replace with your network credentials
 const char* ssid     = "ESP32-Access-Point";
 const char* password = "5555555555";
+
 // Set web server port number to 80
 WiFiServer server(80);
-
 
 const int ledPin =  2;      // the number of the LED pin
 const byte interruptPin = 13;
 static const String CONNECTED_MSG = "SOCKET_CONNECTED";
+Button button1 = {false};
 
 struct Button {
   bool pressed;
 };
-
-Button button1 = {false};
 
 void IRAM_ATTR isr() {
   button1.pressed = true;
@@ -30,7 +29,6 @@ void setup() {
   pinMode(interruptPin,INPUT);
   attachInterrupt(digitalPinToInterrupt(interruptPin), isr, FALLING);
 
-  
   WiFi.disconnect();
   delay(200); //this delay, if you comment out it all works, if left, softAPIP returns 0.0.0.0
   WiFi.mode(WIFI_STA);
@@ -45,7 +43,6 @@ void setup() {
   IPAddress IP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(IP);
-  
 }
 
 void loop() {
