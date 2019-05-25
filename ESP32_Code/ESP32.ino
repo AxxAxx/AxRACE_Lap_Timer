@@ -12,8 +12,15 @@ WiFiServer server(80);
 
 const int ledPin =  2;      // the number of the LED pin
 const byte interruptPin = 13;
-static const String CONNECTED_MSG = "SOCKET_CONNECTED";
 Button button1 = {false};
+
+
+// How often to ping (milliseconds)
+static const int PING_TIME = 1000;
+
+// Special messages
+static const String PING_MSG = "SOCKET_PING";
+static const String CONNECTED_MSG = "SOCKET_CONNECTED";
 
 struct Button {
   bool pressed;
@@ -48,6 +55,8 @@ void setup() {
 void loop() {
   WiFiClient client = server.available();   // Listen for incoming clients
   if (client) {                             // If a new client connects,
+
+    int senttime = millis();      // Last time a ping was sent
     client.println(CONNECTED_MSG);
     Serial.println("New Client.");          // print a message out in the serial port
     String currentLine = "";                // make a String to hold incoming data from the client
@@ -58,6 +67,11 @@ void loop() {
         delay(1000);
         digitalWrite(ledPin, LOW);
         button1.pressed = false;    
+      }
+      int now = millis();
+      if (now - senttime > PING_TIME) {
+        client.println(PING_MSG);
+        senttime = now;
       }
     }
   }
