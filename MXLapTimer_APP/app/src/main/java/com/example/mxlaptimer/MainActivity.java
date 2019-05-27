@@ -28,23 +28,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static boolean firstStart = true;
-
     TextView textView, thename ;
-
     Button start, pause, reset, lap ;
-
     long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L ;
-
     Handler handler;
-
     int Seconds, Minutes, MilliSeconds ;
-
     ListView listView ;
-
     String[] ListElements = new String[] {  };
-
     List<String> ListElementsArrayList ;
-
     ArrayAdapter<String> adapter ;
 
     // Tag for logging
@@ -55,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
     // UI elements
     TextView textStatus, textRX, textTX;
-
-
 
     TextView count;
     @Override
@@ -127,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     public void startstop()
     {
 
@@ -177,9 +165,6 @@ public class MainActivity extends AppCompatActivity {
             handler.postDelayed(runnable, 0);
         }
     }
-
-
-
 
     public Runnable runnable = new Runnable() {
 
@@ -298,9 +283,11 @@ public class MainActivity extends AppCompatActivity {
         int port;
 
         // Special messages denoting connection status
-        private static final String PING_MSG = "PING";
-        private static final String CONNECTED_MSG = "CONNECTED";
+        private static final String PING_MSG = "2";
+        private static final String CONNECTED_MSG = "1";
+        private static final String LAP_MSG = "0";
         private static final String DISCONNECTED_MSG = "DISCONNECTED";
+
 
         Socket socket = null;
         BufferedReader inStream = null;
@@ -395,17 +382,16 @@ public class MainActivity extends AppCompatActivity {
             if(msg.equals(CONNECTED_MSG)) {
                 connected();
             }
-            else if(msg.equals(PING_MSG))
-            {}
-
-            // Invoke the gotMessage callback for all other messages
-            else {
-                gotMessage(msg);
+            else if(msg.equals(LAP_MSG))
+            {                gotMessage(msg);
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(200);
                 startstop();
-
             }
+
+            else if(msg.equals(PING_MSG))
+            {}
+
 
             super.onProgressUpdate(values);
         }
