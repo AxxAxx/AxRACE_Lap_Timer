@@ -17,8 +17,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -66,12 +64,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         // Save references to UI elements
         textStatus = (TextView)findViewById(R.id.bluetoothStatus);
         textRX = (TextView)findViewById(R.id.readBuffer);
-
-
         textView = (TextView)findViewById(R.id.textView);
         start = (Button)findViewById(R.id.button);
         pause = (Button)findViewById(R.id.button2);
@@ -93,61 +88,7 @@ public class MainActivity extends AppCompatActivity {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-                if(firstStart)
-                {
-                    StartTime = SystemClock.uptimeMillis();
-                    handler.postDelayed(runnable, 0);
-
-                    reset.setEnabled(false);
-                    firstStart=false;
-                }
-                else
-                {
-
-
-
-
-
-                    String[] parts = textView.getText().toString().split(":");
-                    String part1 = parts[0]; // 004
-                    String part2 = parts[1]; // 004
-                    String part3 = parts[2]; // 004
-
-                    int result1 = Integer.parseInt(part1)*60000;
-                    int result2 = Integer.parseInt(part2)*1000;
-                    int result3 = Integer.parseInt(part3);
-
-                    int sum = result1 + result2 + result3;
-
-
-                    ArrayList<String> singleList = new ArrayList<String>();
-                    singleList.add(thename.getText().toString());
-                    singleList.add(textView.getText().toString());
-                    singleList.add(String.valueOf(sum));
-
-
-
-                    ListElementsArrayList.add(0, thename.getText().toString() + "   -   " + textView.getText().toString() + "   -   " + sum);
-
-
-                    adapter.notifyDataSetChanged();
-
-                    handler.removeCallbacks(runnable);
-                    reset.setEnabled(true);
-                    MillisecondTime = 0L ;
-                    StartTime = 0L ;
-                    TimeBuff = 0L ;
-                    UpdateTime = 0L ;
-                    Seconds = 0 ;
-                    Minutes = 0 ;
-                    MilliSeconds = 0 ;
-
-                    textView.setText("00:00:00");
-                    StartTime = SystemClock.uptimeMillis();
-                    handler.postDelayed(runnable, 0);
-                }
+            startstop();
 
 
 
@@ -166,15 +107,9 @@ public class MainActivity extends AppCompatActivity {
                 Seconds = 0 ;
                 Minutes = 0 ;
                 MilliSeconds = 0 ;
-
                 textView.setText("00:00:00");
                 firstStart=true;
 
-                //TimeBuff += MillisecondTime;
-
-                //handler.removeCallbacks(runnable);
-
-                //reset.setEnabled(true);
 
             }
         });
@@ -185,13 +120,66 @@ public class MainActivity extends AppCompatActivity {
 
 
                 ListElementsArrayList.clear();
-
                 adapter.notifyDataSetChanged();
             }
         });
 
 
     }
+
+
+    public void startstop()
+    {
+
+        if(firstStart)
+        {
+            StartTime = SystemClock.uptimeMillis();
+            handler.postDelayed(runnable, 0);
+
+            reset.setEnabled(false);
+            firstStart=false;
+        }
+        else
+        {
+            String[] parts = textView.getText().toString().split(":");
+            String part1 = parts[0]; // 004
+            String part2 = parts[1]; // 004
+            String part3 = parts[2]; // 004
+
+            int result1 = Integer.parseInt(part1)*60000;
+            int result2 = Integer.parseInt(part2)*1000;
+            int result3 = Integer.parseInt(part3);
+
+            int sum = result1 + result2 + result3;
+
+
+            ArrayList<String> singleList = new ArrayList<String>();
+            singleList.add(thename.getText().toString());
+            singleList.add(textView.getText().toString());
+            singleList.add(String.valueOf(sum));
+
+            ListElementsArrayList.add(0, thename.getText().toString() + "   -   " + textView.getText().toString() + "   -   " + sum);
+
+            adapter.notifyDataSetChanged();
+
+            handler.removeCallbacks(runnable);
+            reset.setEnabled(true);
+            MillisecondTime = 0L ;
+            StartTime = 0L ;
+            TimeBuff = 0L ;
+            UpdateTime = 0L ;
+            Seconds = 0 ;
+            Minutes = 0 ;
+            MilliSeconds = 0 ;
+
+            textView.setText("00:00:00");
+            StartTime = SystemClock.uptimeMillis();
+            handler.postDelayed(runnable, 0);
+        }
+    }
+
+
+
 
     public Runnable runnable = new Runnable() {
 
@@ -218,17 +206,12 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_action, menu);
         return true;
     }
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -252,17 +235,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
-
-
-
     /**
      * Helper function, print a status to both the UI and program log.
      */
     void setStatus(String s) {
+
         textStatus.setText(s);
     }
 
@@ -293,7 +270,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * Invoked by the AsyncTask when the connection is successfully established.
      */
@@ -302,20 +278,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * Invoked by the AsyncTask when a newline-delimited message is received.
      */
     private void gotMessage(String msg) {
         textRX.setText(msg);
-        Log.v(TAG, "[RX] " + msg);
     }
-
-
-
-
-
-
 
     /**
      * AsyncTask that connects to a remote host over WiFi and reads/writes the connection
@@ -330,8 +298,8 @@ public class MainActivity extends AppCompatActivity {
         int port;
 
         // Special messages denoting connection status
-        private static final String PING_MSG = "SOCKET_PING";
-        private static final String CONNECTED_MSG = "SOCKET_CONNECTED";
+        private static final String PING_MSG = "PING";
+        private static final String CONNECTED_MSG = "CONNECTED";
         private static final String DISCONNECTED_MSG = "DISCONNECTED";
 
         Socket socket = null;
@@ -342,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
         private boolean disconnectSignal = false;
 
         // Socket timeout - close if no messages received (ms)
-        private int timeout = 5000;
+        private int timeout = 10000;
 
         // Constructor
 
@@ -431,8 +399,13 @@ public class MainActivity extends AppCompatActivity {
             {}
 
             // Invoke the gotMessage callback for all other messages
-            else
+            else {
                 gotMessage(msg);
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                v.vibrate(200);
+                startstop();
+
+            }
 
             super.onProgressUpdate(values);
         }

@@ -1,6 +1,8 @@
-package edu.stanford.me202.wifidemo;
+package com.example.wifidemo;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -248,6 +250,7 @@ public class WiFiActivity extends Activity {
          * doInBackground() function running in a separate thread when
          * publishProgress() is called.
          */
+        @TargetApi(Build.VERSION_CODES.CUPCAKE)
         @Override
         protected void onProgressUpdate(String... values) {
 

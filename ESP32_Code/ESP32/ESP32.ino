@@ -12,19 +12,21 @@ WiFiServer server(80);
 
 const int ledPin =  2;      // the number of the LED pin
 const byte interruptPin = 13;
-Button button1 = {false};
 
 
 // How often to ping (milliseconds)
-static const int PING_TIME = 1000;
+static const int PING_TIME = 5000;
 
 // Special messages
-static const String PING_MSG = "SOCKET_PING";
-static const String CONNECTED_MSG = "SOCKET_CONNECTED";
+static const String PING_MSG = "PING";
+static const String CONNECTED_MSG = "CONNECTED";
 
 struct Button {
   bool pressed;
 };
+
+Button button1 = {false};
+
 
 void IRAM_ATTR isr() {
   button1.pressed = true;
@@ -56,6 +58,14 @@ void loop() {
   WiFiClient client = server.available();   // Listen for incoming clients
   if (client) {                             // If a new client connects,
 
+    for (int i = 0; i<5; i++){
+        digitalWrite(ledPin, HIGH);
+        delay(200);
+        digitalWrite(ledPin, LOW);
+        delay(200);
+    }
+
+    
     int senttime = millis();      // Last time a ping was sent
     client.println(CONNECTED_MSG);
     Serial.println("New Client.");          // print a message out in the serial port

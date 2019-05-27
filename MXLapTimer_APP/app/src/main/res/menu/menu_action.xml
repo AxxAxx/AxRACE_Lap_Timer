@@ -9,7 +9,6 @@
 
     <item
         android:id="@+id/action_favorite"
-        android:icon="@drawable/baseline_wifi_white_18"
         android:title="wifi"
         app:showAsAction="always" />
 
