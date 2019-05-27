@@ -1,7 +1,12 @@
 #include <WiFi.h>
 
-#define WIFI
-#define DEBUG
+//#define DEBUG
+
+#ifdef DEBUG
+  #define DEBUG_PRINT(x)  Serial.println (x)
+#else
+ #define DEBUG_PRINT(x)
+#endif
 
 // Replace with your network credentials
 const char* ssid     = "ESP32-Access-Point";
@@ -18,8 +23,9 @@ const byte interruptPin = 13;
 static const int PING_TIME = 5000;
 
 // Special messages
-static const String PING_MSG = "PING";
-static const String CONNECTED_MSG = "CONNECTED";
+static const String PING_MSG = "2";
+static const String CONNECTED_MSG = "1";
+static const String LAP_MSG = "0";
 
 struct Button {
   bool pressed;
@@ -27,9 +33,17 @@ struct Button {
 
 Button button1 = {false};
 
-
 void IRAM_ATTR isr() {
   button1.pressed = true;
+}
+
+void blinklight(){
+  for (int i = 0; i<5; i++){
+    digitalWrite(ledPin, HIGH);
+    delay(150);
+    digitalWrite(ledPin, LOW);
+    delay(150);
+    }
 }
 
 void setup() {
@@ -37,7 +51,6 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(interruptPin,INPUT);
   attachInterrupt(digitalPinToInterrupt(interruptPin), isr, FALLING);
-
   WiFi.disconnect();
   delay(200); //this delay, if you comment out it all works, if left, softAPIP returns 0.0.0.0
   WiFi.mode(WIFI_STA);
@@ -48,37 +61,27 @@ void setup() {
   WiFi.softAP(ssid, NULL);//, password);  
   delay(500); 
   server.begin();
-
   IPAddress IP = WiFi.softAPIP();
-  Serial.print("AP IP address: ");
-  Serial.println(IP);
+  DEBUG_PRINT("Serup Complete")
+  DEBUG_PRINT("AP IP address: " + IP)
 }
 
 void loop() {
   WiFiClient client = server.available();   // Listen for incoming clients
   if (client) {                             // If a new client connects,
-
-    for (int i = 0; i<5; i++){
-        digitalWrite(ledPin, HIGH);
-        delay(200);
-        digitalWrite(ledPin, LOW);
-        delay(200);
-    }
-
-    
-    int senttime = millis();      // Last time a ping was sent
+    blinklight();
+    unsigned long senttime = millis();      // Last time a ping was sent
     client.println(CONNECTED_MSG);
-    Serial.println("New Client.");          // print a message out in the serial port
-    String currentLine = "";                // make a String to hold incoming data from the client
+    DEBUG_PRINT("New Client.");          // print a message out in the serial port
     while (client.connected()) {            // loop while the client's connected
       if (button1.pressed) {
-        client.println("1");
+        client.println(LAP_MSG);
         digitalWrite(ledPin, HIGH);
         delay(1000);
         digitalWrite(ledPin, LOW);
         button1.pressed = false;    
       }
-      int now = millis();
+      unsigned long now = millis();
       if (now - senttime > PING_TIME) {
         client.println(PING_MSG);
         senttime = now;

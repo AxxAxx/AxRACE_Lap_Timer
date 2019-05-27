@@ -383,7 +383,8 @@ public class MainActivity extends AppCompatActivity {
                 connected();
             }
             else if(msg.equals(LAP_MSG))
-            {                gotMessage(msg);
+            {
+                gotMessage(msg);
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(200);
                 startstop();
