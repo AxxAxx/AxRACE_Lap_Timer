@@ -1,4 +1,4 @@
-package com.example.mxlaptimer;
+package com.timerapp.mxlaptimer;
 
 import org.junit.Test;
 

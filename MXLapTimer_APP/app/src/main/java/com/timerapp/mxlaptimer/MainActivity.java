@@ -1,4 +1,4 @@
-package com.example.mxlaptimer;
+package com.timerapp.mxlaptimer;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,13 +8,14 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.BufferedReader;
@@ -24,12 +25,18 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
     public static boolean firstStart = true;
+
     TextView textView, thename ;
     Button start, pause, reset, lap ;
+    Switch sortswitch;
+
     long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L ;
     Handler handler;
     int Seconds, Minutes, MilliSeconds ;
@@ -37,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
     String[] ListElements = new String[] {  };
     List<String> ListElementsArrayList ;
     ArrayAdapter<String> adapter ;
+    ArrayList<Rider> riders = new ArrayList<Rider>();
 
+    int ridernumber = 0;
     // Tag for logging
     private final String TAG = getClass().getSimpleName();
 
@@ -62,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         reset = (Button)findViewById(R.id.button3);
         listView = (ListView)findViewById(R.id.listview1);
         thename = (TextView) findViewById(R.id.racername);
+        sortswitch = (Switch) findViewById(R.id.switch1);
 
         handler = new Handler() ;
 
@@ -106,14 +116,37 @@ public class MainActivity extends AppCompatActivity {
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                handler.removeCallbacks(runnable);
+                reset.setEnabled(true);
+                MillisecondTime = 0L ;
+                StartTime = 0L ;
+                TimeBuff = 0L ;
+                UpdateTime = 0L ;
+                Seconds = 0 ;
+                Minutes = 0 ;
+                MilliSeconds = 0 ;
+                textView.setText("00:00:00");
+
+                riders.clear();
 
 
+
+                firstStart=true;
                 ListElementsArrayList.clear();
                 adapter.notifyDataSetChanged();
             }
         });
 
-
+        sortswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    sortscore();
+                }
+                else {
+                    sortnumber();
+                }
+            }
+        });
     }
 
     public void startstop()
@@ -121,6 +154,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(firstStart)
         {
+            ridernumber = 0;
+
             StartTime = SystemClock.uptimeMillis();
             handler.postDelayed(runnable, 0);
 
@@ -129,6 +164,9 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
+        ridernumber++;
+
+
             String[] parts = textView.getText().toString().split(":");
             String part1 = parts[0]; // 004
             String part2 = parts[1]; // 004
@@ -140,15 +178,17 @@ public class MainActivity extends AppCompatActivity {
 
             int sum = result1 + result2 + result3;
 
+            riders.add(new Rider(thename.getText().toString(),textView.getText().toString() , sum, ridernumber));
 
-            ArrayList<String> singleList = new ArrayList<String>();
-            singleList.add(thename.getText().toString());
-            singleList.add(textView.getText().toString());
-            singleList.add(String.valueOf(sum));
+            // check current state of a Switch (true or false).
+            Boolean switchState = sortswitch.isChecked();
 
-            ListElementsArrayList.add(0, thename.getText().toString() + "   -   " + textView.getText().toString() + "   -   " + sum);
+            if (switchState) {
+                sortscore();            }
+            else {
+                sortnumber();            }
 
-            adapter.notifyDataSetChanged();
+
 
             handler.removeCallbacks(runnable);
             reset.setEnabled(true);
@@ -212,8 +252,30 @@ public class MainActivity extends AppCompatActivity {
                 // Vibrate for 400 milliseconds
                 Vibrator v2 = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 v2.vibrate(200);
-                Toast.makeText(MainActivity.this,
-                        "Share is not implemented yet!", Toast.LENGTH_LONG).show();
+
+                StringBuilder str=new StringBuilder();
+                String[] arrStr=new String[ListElementsArrayList.size()];
+                ListElementsArrayList.toArray(arrStr);
+
+                for(int i=0;i<arrStr.length;i++){
+                    str.append(arrStr[i]);
+                    str.append("\n");
+                }
+
+                try {
+                    Intent sendIntent = new Intent();//"android.intent.action.MAIN");
+                    //sendIntent.setComponent(new ComponentName("com.whatsapp", "com.whatsapp.Conversation"));
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.setType("text/plain");
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, str.toString());
+                    // sendIntent.putStringArrayListExtra(Intent.EXTRA_TEXT,finalList);
+
+                    sendIntent.setPackage("com.whatsapp");
+                    startActivity(sendIntent);
+                } catch(Exception e) {
+                    Toast.makeText(this, "Error/n" + e.toString(), Toast.LENGTH_SHORT).show();
+                }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -224,8 +286,26 @@ public class MainActivity extends AppCompatActivity {
      * Helper function, print a status to both the UI and program log.
      */
     void setStatus(String s) {
-
         textStatus.setText(s);
+    }
+
+    public void sortscore(){
+        Collections.sort(riders, new scoreComparator());
+        ListElementsArrayList.clear();
+        for(Rider temp: riders){
+            ListElementsArrayList.add(0, temp.getriderName() +  "   -   " + temp.getTime() + "   -   " + temp.getNumber());
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+
+    public void sortnumber(){
+        Collections.sort(riders, new numberComparator());
+        ListElementsArrayList.clear();
+        for(Rider temp: riders){
+            ListElementsArrayList.add(0, temp.getriderName() +  "   -   " + temp.getTime() + "   -   " + temp.getNumber());
+        }
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -269,6 +349,65 @@ public class MainActivity extends AppCompatActivity {
     private void gotMessage(String msg) {
         textRX.setText(msg);
     }
+
+
+
+    public class Rider {
+
+        private String riderName;
+        private String riderTime;
+        private int riderScore;
+        private int riderNumber;
+
+        public Rider(String riderName, String riderTime, int riderScore, int riderNumber) {
+            super();
+            this.riderName = riderName;
+            this.riderTime = riderTime;
+            this.riderScore = riderScore;
+            this.riderNumber = riderNumber;
+        }
+
+        public String getriderName() {
+            return riderName;
+        }
+        public void setriderName(String riderName) {
+            this.riderName = riderName;
+        }
+        public String getTime() {
+            return riderTime;
+        }
+        public void setTime(String riderTime) {
+            this.riderTime = riderTime;
+        }
+        public int getScore() {
+            return riderScore;
+        }
+        public void setriderScore(int riderScore) {
+            this.riderScore = riderScore;
+        }
+        public int getNumber() {
+            return riderNumber;
+        }
+        public void setriderNumber(int riderNumber) {
+            this.riderNumber = riderNumber;
+        }
+    }
+    class scoreComparator implements Comparator<Rider> {
+        @Override
+        public int compare(Rider a, Rider b) {
+            return a.getScore() < b.getScore() ? 1 : a.getScore() == b.getScore() ? 0 : -1;
+        }
+    }
+
+    class numberComparator implements Comparator<Rider> {
+        @Override
+        public int compare(Rider a, Rider b) {
+            return a.getNumber() < b.getNumber() ? -1 : a.getNumber() == b.getNumber() ? 0 : 1;
+        }
+    }
+
+
+
 
     /**
      * AsyncTask that connects to a remote host over WiFi and reads/writes the connection

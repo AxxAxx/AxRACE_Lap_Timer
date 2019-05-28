@@ -9,7 +9,7 @@
     android:paddingLeft="5pt"
     android:paddingRight="5pt"
     android:paddingTop="5pt"
-    tools:context="com.example.mxlaptimer.MainActivity"
+    tools:context="com.timerapp.mxlaptimer.MainActivity"
     android:background="#ECEFF1">
 
 
