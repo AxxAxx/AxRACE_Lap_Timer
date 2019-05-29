@@ -166,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         {
         ridernumber++;
 
-
             String[] parts = textView.getText().toString().split(":");
             String part1 = parts[0]; // 004
             String part2 = parts[1]; // 004
@@ -245,13 +244,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_favorite:
                 // Vibrate for 400 milliseconds
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                v.vibrate(200);
+                v.vibrate(100);
                 connectButtonPressed(null);
                 return true;
             case R.id.action_share:
                 // Vibrate for 400 milliseconds
                 Vibrator v2 = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                v2.vibrate(200);
+                v2.vibrate(100);
 
                 StringBuilder str=new StringBuilder();
                 String[] arrStr=new String[ListElementsArrayList.size()];
@@ -307,6 +306,8 @@ public class MainActivity extends AppCompatActivity {
         }
         adapter.notifyDataSetChanged();
     }
+
+
 
     /**
      * Try to start a connection with the specified remote host.
