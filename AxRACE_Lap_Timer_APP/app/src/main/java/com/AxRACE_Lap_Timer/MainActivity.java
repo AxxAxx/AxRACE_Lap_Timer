@@ -1,4 +1,4 @@
-package com.timerapp.mxlaptimer;
+package com.AxRACE_Lap_Timer;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,9 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.timerapp.mxlaptimer.R;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
