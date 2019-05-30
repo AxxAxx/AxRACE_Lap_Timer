@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+                android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:weightSum="100">
+
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="10"
+        android:gravity="center|left"
+        android:text="TextView1"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="40"
+        android:gravity="center|left"
+        android:text="TextView2"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="25"
+        android:gravity="center|left"
+        android:text="TextView3"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="25"
+        android:gravity="center|left"
+        android:text="TextView4"
+        android:textAlignment="center" />
+
+</LinearLayout>

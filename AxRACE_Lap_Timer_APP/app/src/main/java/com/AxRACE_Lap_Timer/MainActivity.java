@@ -34,6 +34,9 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
+
     public static boolean firstStart = true;
 
     TextView textView, thename ;
@@ -51,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
     int ridernumber = 0;
     // Tag for logging
-    private final String TAG = getClass().getSimpleName();
 
     // AsyncTask object that manages the connection in a separate thread
     WiFiSocketTask wifiTask = null;
@@ -72,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         start = (Button)findViewById(R.id.button);
         pause = (Button)findViewById(R.id.button2);
         reset = (Button)findViewById(R.id.button3);
-        listView = (ListView)findViewById(R.id.listview1);
         thename = (TextView) findViewById(R.id.racername);
         sortswitch = (Switch) findViewById(R.id.switch1);
 
@@ -85,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 ListElementsArrayList
         );
 
-        listView.setAdapter(adapter);
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 Seconds = 0 ;
                 Minutes = 0 ;
                 MilliSeconds = 0 ;
-                textView.setText("00:00:00");
+                textView.setText("00:00:000");
                 firstStart=true;
 
 
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 Seconds = 0 ;
                 Minutes = 0 ;
                 MilliSeconds = 0 ;
-                textView.setText("00:00:00");
+                textView.setText("00:00:000");
 
                 riders.clear();
 
@@ -178,9 +178,14 @@ public class MainActivity extends AppCompatActivity {
             int result2 = Integer.parseInt(part2)*1000;
             int result3 = Integer.parseInt(part3);
 
-            int sum = result1 + result2 + result3;
+            int score = result1 + result2 + result3;
 
-            riders.add(new Rider(thename.getText().toString(),textView.getText().toString() , sum, ridernumber));
+            riders.add(new Rider(ridernumber, thename.getText().toString(), textView.getText().toString() , "-00:00:001", 1, 1));
+
+            ListView mListView = (ListView) findViewById(R.id.listView);
+
+            PersonListAdapter adapter = new PersonListAdapter(this, R.layout.adapter_view_layout, riders);
+            mListView.setAdapter(adapter);
 
             // check current state of a Switch (true or false).
             Boolean switchState = sortswitch.isChecked();
@@ -189,8 +194,6 @@ public class MainActivity extends AppCompatActivity {
                 sortscore();            }
             else {
                 sortnumber();            }
-
-
 
             handler.removeCallbacks(runnable);
             reset.setEnabled(true);
@@ -202,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
             Minutes = 0 ;
             MilliSeconds = 0 ;
 
-            textView.setText("00:00:00");
+            textView.setText("00:00:000");
             StartTime = SystemClock.uptimeMillis();
             handler.postDelayed(runnable, 0);
         }
@@ -224,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
             MilliSeconds = (int) (UpdateTime % 1000);
 
-            textView.setText("" + Minutes + ":"
+            textView.setText("" + String.format("%02d", Minutes) + ":"
                     + String.format("%02d", Seconds) + ":"
                     + String.format("%03d", MilliSeconds));
 
@@ -295,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
         Collections.sort(riders, new scoreComparator());
         ListElementsArrayList.clear();
         for(Rider temp: riders){
-            ListElementsArrayList.add(0, temp.getriderName() +  "   -   " + temp.getTime() + "   -   " + temp.getNumber());
+            ListElementsArrayList.add(0, temp.getName() +  "   -   " + temp.getTime() + "   -   " + temp.getNumber());
         }
         adapter.notifyDataSetChanged();
     }
@@ -305,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         Collections.sort(riders, new numberComparator());
         ListElementsArrayList.clear();
         for(Rider temp: riders){
-            ListElementsArrayList.add(0, temp.getriderName() +  "   -   " + temp.getTime() + "   -   " + temp.getNumber());
+            ListElementsArrayList.add(0, temp.getName() +  "   -   " + temp.getTime() + "   -   " + temp.getNumber());
         }
         adapter.notifyDataSetChanged();
     }
@@ -356,46 +359,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public class Rider {
 
-        private String riderName;
-        private String riderTime;
-        private int riderScore;
-        private int riderNumber;
-
-        public Rider(String riderName, String riderTime, int riderScore, int riderNumber) {
-            super();
-            this.riderName = riderName;
-            this.riderTime = riderTime;
-            this.riderScore = riderScore;
-            this.riderNumber = riderNumber;
-        }
-
-        public String getriderName() {
-            return riderName;
-        }
-        public void setriderName(String riderName) {
-            this.riderName = riderName;
-        }
-        public String getTime() {
-            return riderTime;
-        }
-        public void setTime(String riderTime) {
-            this.riderTime = riderTime;
-        }
-        public int getScore() {
-            return riderScore;
-        }
-        public void setriderScore(int riderScore) {
-            this.riderScore = riderScore;
-        }
-        public int getNumber() {
-            return riderNumber;
-        }
-        public void setriderNumber(int riderNumber) {
-            this.riderNumber = riderNumber;
-        }
-    }
     class scoreComparator implements Comparator<Rider> {
         @Override
         public int compare(Rider a, Rider b) {

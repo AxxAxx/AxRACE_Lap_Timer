@@ -57,23 +57,82 @@
         android:text="Clear list" />
 
 
-    <ListView
-        android:id="@+id/listview1"
+
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/button3"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="6dp"
+        android:weightSum="100">
 
-        />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="10"
+            android:background="#43009688"
+            android:gravity="center|left"
+            android:text="#"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="40"
+            android:background="#43009688"
+            android:gravity="center|left"
+            android:text="Name"
+            android:textAlignment="center"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="25"
+            android:background="#43009688"
+            android:gravity="center|left"
+            android:text="Time"
+            android:textAlignment="center"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="25"
+            android:background="#43009688"
+            android:gravity="center|left"
+            android:text="Diff Time"
+            android:textAlignment="center"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/header"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="30dp" />
+
 
     <Switch
         android:id="@+id/switch1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/listview1"
-        android:layout_alignRight="@+id/listview1"
-        android:layout_alignBottom="@+id/listview1"
+        android:layout_alignEnd="@+id/header"
+        android:layout_alignRight="@+id/header"
+        android:layout_alignBottom="@+id/header"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
