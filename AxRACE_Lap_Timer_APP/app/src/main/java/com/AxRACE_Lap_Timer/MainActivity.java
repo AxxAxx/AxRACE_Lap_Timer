@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
                 riders.clear();
 
+                ridernumber = 0;
 
 
                 firstStart=true;
@@ -157,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
 
         if(firstStart)
         {
-            ridernumber = 0;
 
             StartTime = SystemClock.uptimeMillis();
             handler.postDelayed(runnable, 0);
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
             int score = result1 + result2 + result3;
 
-            riders.add(new Rider(ridernumber, thename.getText().toString(), textView.getText().toString() , "-00:00:001", 1, 1));
+            riders.add(new Rider(ridernumber, thename.getText().toString(), textView.getText().toString() , "-00:00:000", score, ridernumber));
 
             ListView mListView = (ListView) findViewById(R.id.listView);
 
@@ -297,16 +297,27 @@ public class MainActivity extends AppCompatActivity {
     public void sortscore(){
         Collections.sort(riders, new scoreComparator());
         ListElementsArrayList.clear();
+        //riders.clear();
+
         for(Rider temp: riders){
+
             ListElementsArrayList.add(0, temp.getName() +  "   -   " + temp.getTime() + "   -   " + temp.getNumber());
         }
         adapter.notifyDataSetChanged();
     }
 
 
+
+
+
+
+
+
     public void sortnumber(){
         Collections.sort(riders, new numberComparator());
         ListElementsArrayList.clear();
+        //riders.clear();
+
         for(Rider temp: riders){
             ListElementsArrayList.add(0, temp.getName() +  "   -   " + temp.getTime() + "   -   " + temp.getNumber());
         }
