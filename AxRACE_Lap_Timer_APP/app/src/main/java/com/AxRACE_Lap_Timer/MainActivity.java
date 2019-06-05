@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter ;
     ArrayList<Rider> riders = new ArrayList<Rider>();
 
+    int bestMillis = 100000;
     int ridernumber = 0;
     // Tag for logging
 
@@ -180,12 +181,12 @@ public class MainActivity extends AppCompatActivity {
 
             int score = result1 + result2 + result3;
 
+            if (score < bestMillis){
+                bestMillis = score;
+            }
+
             riders.add(new Rider(ridernumber, thename.getText().toString(), textView.getText().toString() , "-00:00:000", score, ridernumber));
 
-            ListView mListView = (ListView) findViewById(R.id.listView);
-
-            PersonListAdapter adapter = new PersonListAdapter(this, R.layout.adapter_view_layout, riders);
-            mListView.setAdapter(adapter);
 
             // check current state of a Switch (true or false).
             Boolean switchState = sortswitch.isChecked();
@@ -194,6 +195,14 @@ public class MainActivity extends AppCompatActivity {
                 sortscore();            }
             else {
                 sortnumber();            }
+
+
+
+            ListView mListView = (ListView) findViewById(R.id.listView);
+
+            PersonListAdapter adapter = new PersonListAdapter(this, R.layout.adapter_view_layout, riders);
+            mListView.setAdapter(adapter);
+
 
             handler.removeCallbacks(runnable);
             reset.setEnabled(true);
@@ -254,10 +263,6 @@ public class MainActivity extends AppCompatActivity {
                 connectButtonPressed(null);
                 return true;
             case R.id.action_share:
-                // Vibrate for 400 milliseconds
-                Vibrator v2 = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                v2.vibrate(100);
-
                 StringBuilder str=new StringBuilder();
                 String[] arrStr=new String[ListElementsArrayList.size()];
                 ListElementsArrayList.toArray(arrStr);
@@ -296,35 +301,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void sortscore(){
         Collections.sort(riders, new scoreComparator());
-        ListElementsArrayList.clear();
-        //riders.clear();
 
-        for(Rider temp: riders){
+        ListView mListView = (ListView) findViewById(R.id.listView);
 
-            ListElementsArrayList.add(0, temp.getName() +  "   -   " + temp.getTime() + "   -   " + temp.getNumber());
-        }
-        adapter.notifyDataSetChanged();
+        PersonListAdapter adapter = new PersonListAdapter(this, R.layout.adapter_view_layout, riders);
+        mListView.setAdapter(adapter);
     }
-
-
-
-
-
 
 
 
     public void sortnumber(){
         Collections.sort(riders, new numberComparator());
-        ListElementsArrayList.clear();
-        //riders.clear();
 
-        for(Rider temp: riders){
-            ListElementsArrayList.add(0, temp.getName() +  "   -   " + temp.getTime() + "   -   " + temp.getNumber());
-        }
-        adapter.notifyDataSetChanged();
+        ListView mListView = (ListView) findViewById(R.id.listView);
+
+        PersonListAdapter adapter = new PersonListAdapter(this, R.layout.adapter_view_layout, riders);
+        mListView.setAdapter(adapter);
+
     }
-
-
 
     /**
      * Try to start a connection with the specified remote host.
@@ -357,6 +351,9 @@ public class MainActivity extends AppCompatActivity {
      * Invoked by the AsyncTask when the connection is successfully established.
      */
     private void connected() {
+        // Vibrate for 100 milliseconds
+        Vibrator v2 = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v2.vibrate(100);
         setStatus("Connected.");
     }
 
@@ -374,19 +371,17 @@ public class MainActivity extends AppCompatActivity {
     class scoreComparator implements Comparator<Rider> {
         @Override
         public int compare(Rider a, Rider b) {
-            return a.getScore() < b.getScore() ? 1 : a.getScore() == b.getScore() ? 0 : -1;
+            return a.getScore() > b.getScore() ? 1 : a.getScore() == b.getScore() ? 0 : -1;
         }
     }
 
     class numberComparator implements Comparator<Rider> {
         @Override
         public int compare(Rider a, Rider b) {
-            return a.getNumber() < b.getNumber() ? -1 : a.getNumber() == b.getNumber() ? 0 : 1;
+            return a.getNumber() > b.getNumber() ? -1 : a.getNumber() == b.getNumber() ? 0 : 1;
         }
     }
-
-
-
+    
 
     /**
      * AsyncTask that connects to a remote host over WiFi and reads/writes the connection
