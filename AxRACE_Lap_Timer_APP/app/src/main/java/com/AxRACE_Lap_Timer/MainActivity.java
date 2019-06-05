@@ -8,12 +8,14 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -26,10 +28,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 
@@ -39,9 +44,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static boolean firstStart = true;
 
-    TextView textView, thename ;
-    Button start, pause, reset, lap ;
+    TextView textView, thename, thetrack ;
+    Button start, pause, reset, lap;
     Switch sortswitch;
+    EditText inputtext1, inputtext2;
 
     long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L ;
     Handler handler;
@@ -76,7 +82,10 @@ public class MainActivity extends AppCompatActivity {
         pause = (Button)findViewById(R.id.button2);
         reset = (Button)findViewById(R.id.button3);
         thename = (TextView) findViewById(R.id.racername);
+        thetrack = (TextView) findViewById(R.id.trackname);
         sortswitch = (Switch) findViewById(R.id.switch1);
+        inputtext1 = (EditText) findViewById(R.id.racername);
+        inputtext2 = (EditText) findViewById(R.id.trackname);
 
         handler = new Handler() ;
 
@@ -86,6 +95,48 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1,
                 ListElementsArrayList
         );
+
+
+
+        inputtext1.setOnKeyListener(new View.OnKeyListener()
+        {
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            inputtext1.clearFocus();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+
+        inputtext2.setOnKeyListener(new View.OnKeyListener()
+        {
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            inputtext2.clearFocus();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
 
 
         start.setOnClickListener(new View.OnClickListener() {
@@ -266,8 +317,25 @@ public class MainActivity extends AppCompatActivity {
                 StringBuilder str=new StringBuilder();
                 String[] arrStr=new String[ListElementsArrayList.size()];
                 ListElementsArrayList.toArray(arrStr);
+                    str.append("*Racetrack: " + thetrack.getText().toString() + "*\n");
 
-                for(int i=0;i<arrStr.length;i++){
+                    Date c = Calendar.getInstance().getTime();
+
+                    SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                    String formattedDate = df.format(c);
+                    str.append("*" + formattedDate + "*\n");
+
+
+
+                    for (Rider temp : riders)
+                    {
+                        str.append(temp.getName() + " - " + temp.getTime()+ " - " + temp.getDifftime());
+                        str.append("\n");
+                    }
+
+
+
+                    for(int i=0;i<arrStr.length;i++){
                     str.append(arrStr[i]);
                     str.append("\n");
                 }

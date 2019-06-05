@@ -47,10 +47,6 @@ public class PersonListAdapter extends ArrayAdapter<Rider> {
         int riderScore = getItem(position).getScore();
         int riderNumber = getItem(position).getNumber();
 
-
-
-
-
         //Create the person object with the information
         Rider person = new Rider(pos,name,time,difftime,riderScore,riderNumber);
 
@@ -65,8 +61,6 @@ public class PersonListAdapter extends ArrayAdapter<Rider> {
         tvName.setText(person.getName());
         tvTime.setText(person.getTime());
         tvDifftime.setText(person.getDifftime());
-
-
 
         return convertView;
     }
