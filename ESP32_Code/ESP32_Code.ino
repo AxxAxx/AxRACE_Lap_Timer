@@ -9,14 +9,14 @@
 #endif
 
 // Replace with your network credentials
-const char* ssid     = "ESP32-Access-Point";
+const char* ssid     = "AxRace_ESP32";
 const char* password = "5555555555";
 
 // Set web server port number to 80
 WiFiServer server(80);
 
-const int ledPin =  2;      // the number of the LED pin
-const byte interruptPin = 13;
+const int ledPin =  13;      // the number of the LED pin
+const byte interruptPin = 34;
 
 
 // How often to ping (milliseconds)
