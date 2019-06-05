@@ -10,7 +10,9 @@
     android:paddingRight="5pt"
     android:paddingTop="5pt"
     tools:context="com.AxRACE_Lap_Timer.MainActivity"
-    android:background="#ECEFF1">
+    android:background="#ECEFF1"
+
+>
 
 
     <TextView
@@ -208,8 +210,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="85dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="75dp"
+        android:orientation="horizontal"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
 
         <TextView
             android:id="@+id/textView8"
@@ -221,13 +225,14 @@
             android:textSize="20dp"
             android:textStyle="bold" />
 
-        <TextView
+        <EditText
             android:id="@+id/racername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2.5"
             android:hint="Name"
-            android:textSize="20dp"  />
+            android:textSize="20dp" />
+
 
         <TextView
             android:id="@+id/textView7"
@@ -237,15 +242,15 @@
             android:text="Location:"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
-        <TextView
+        <EditText
             android:id="@+id/racetrack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Trackname"
-            android:textSize="20dp"  />
+            android:textSize="20dp" />
     </LinearLayout>
 
     <LinearLayout
