@@ -50,7 +50,6 @@ public class Rider {
     public String getDifftime() {
         return difftime;
     }
-
     public void setDifftime(String difftime) {
         this.difftime = difftime;
     }

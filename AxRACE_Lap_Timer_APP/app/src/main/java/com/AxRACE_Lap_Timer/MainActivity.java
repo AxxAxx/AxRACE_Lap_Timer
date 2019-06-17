@@ -248,6 +248,37 @@ public class MainActivity extends AppCompatActivity {
                 sortnumber();            }
 
 
+            int bestTime = 999999999;
+            for (Rider temprider : riders)
+            {
+                if (temprider.getScore() < bestTime){
+                    bestTime = temprider.getScore();
+                }
+            }
+
+            for (Rider temprider : riders)
+            {
+                int diffInt = temprider.getScore() - bestTime;
+
+
+                Seconds = (int) (diffInt / 1000);
+
+                Minutes = Seconds / 60;
+
+                Seconds = Seconds % 60;
+
+                MilliSeconds = (int) (diffInt % 1000);
+
+                String c = String.format("%02d", Minutes) + ":" + String.format("%02d", Seconds) + ":" + String.format("%03d", MilliSeconds);
+
+
+                temprider.setDifftime(c);
+            }
+
+
+
+
+
 
             ListView mListView = (ListView) findViewById(R.id.listView);
 
